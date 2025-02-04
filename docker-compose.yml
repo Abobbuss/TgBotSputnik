@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-bot
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+    volumes:
+      - ./database.db:/app/database.db
+#    env_file:
+#        - .env
+#    command: [ "python", "./bot.py" ]
+    restart: unless-stopped

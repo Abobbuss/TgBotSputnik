@@ -1,0 +1,6 @@
+python-dotenv
+aiofiles==24.1.0
+aiogram==3.13.1
+aiohttp
+aioredis
+asyncpg
