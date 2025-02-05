@@ -11,4 +11,4 @@ router = Router()
 @router.message(F.text == "/start")
 async def start(message: Message, state: FSMContext):
     await state.set_state(UserState.MAIN_MENU)
-    await message.answer(message_constants.welcome_message + "\nВыберите действие:", reply_markup=InlineKeyboards.main_menu())
+    await message.answer(message_constants.welcome_message + "\nВыберите действие:", reply_markup=InlineKeyboards.main_menu(message.from_user.id))

@@ -1,15 +1,22 @@
 ﻿from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from config import load_config
+
+config = load_config()
 
 class InlineKeyboards:
     @staticmethod
-    def main_menu():
-        return InlineKeyboardMarkup(inline_keyboard=[
+    def main_menu(user_id: int):
+        buttons = [
             [InlineKeyboardButton(text="Наши проекты", callback_data="projects")],
             [InlineKeyboardButton(text="Новости спутника", callback_data="news")],
             [InlineKeyboardButton(text="Получить презентацию", callback_data="presentation")],
-            [InlineKeyboardButton(text="Хочу инвестировать", callback_data="invest")],
-            [InlineKeyboardButton(text="Хочу открыть стартап", callback_data="startup")]
-        ])
+        ]
+
+        if user_id in config.tg_bot.admins:
+            buttons.append(
+                [InlineKeyboardButton(text="Загрузить последнюю презентацию", callback_data="upload_presentation")])
+
+        return InlineKeyboardMarkup(inline_keyboard=buttons)
 
     @staticmethod
     def projects_menu():
@@ -27,7 +34,23 @@ class InlineKeyboards:
         ])
 
     @staticmethod
-    def news_menu():
+    def back_to_main():
         return InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main")]
         ])
+
+    @staticmethod
+    def news_navigation(index: int, total: int,  user_id: int):
+        buttons = []
+
+        if index > 0:
+            buttons.append(InlineKeyboardButton(text="⬅ Предыдущая", callback_data=f"news_{index - 1}"))
+        if index < total - 1:
+            buttons.append(InlineKeyboardButton(text="Следующая ➡", callback_data=f"news_{index + 1}"))
+
+        buttons.append(InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main"))
+
+        if user_id in config.tg_bot.admins:
+            buttons.append(InlineKeyboardButton(text="➕ Добавить новость", callback_data="add_news"))
+
+        return InlineKeyboardMarkup(inline_keyboard=[buttons])
