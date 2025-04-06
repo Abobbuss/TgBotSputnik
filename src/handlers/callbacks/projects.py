@@ -1,47 +1,38 @@
 ﻿from aiogram import Router, F
-from aiogram.types import CallbackQuery, FSInputFile
+from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery
 
-from src.projects.projects import GeosProject, FarmProject
 from src.keyboards.inline import InlineKeyboards
+from src.projects.projects import RudaProject, UgolProject
+from src.states.states import UserState
 
 router = Router()
 
-PROJECTS = {
-    "geos": GeosProject(),
-    "farm": FarmProject(),
-}
+ruda = RudaProject()
+ugol = UgolProject()
 
-@router.callback_query(F.data == "projects")
-async def projects_menu(callback: CallbackQuery):
-    await callback.message.answer("Выберите проект:", reply_markup=InlineKeyboards.projects_menu())
+
+@router.callback_query(F.data == "choose_ruda")
+async def choose_ruda(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.SHOW_RUDA_OPTIONS)
+    await callback.message.answer("Вы выбрали направление Руды. Что вас интересует?", reply_markup=InlineKeyboards.project_options_keyboard("ruda"))
     await callback.answer()
 
-@router.callback_query(F.data == "geos")
-async def geos_project(callback: CallbackQuery):
-    project = GeosProject()
-    await callback.message.answer(project.get_info(), reply_markup=InlineKeyboards.project_buttons("geos"))
+
+@router.callback_query(F.data == "choose_ugol")
+async def choose_ugol(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.SHOW_UGOL_OPTIONS)
+    await callback.message.answer("Вы выбрали направление Уголь. Что вас интересует?", reply_markup=InlineKeyboards.project_options_keyboard("ugol"))
     await callback.answer()
 
-@router.callback_query(F.data == "farm")
-async def farm_project(callback: CallbackQuery):
-    project = FarmProject()
-    await callback.message.answer(project.get_info(), reply_markup=InlineKeyboards.project_buttons("farm"))
-    await callback.answer()
 
-@router.callback_query(F.data.startswith("presentation_"))
-async def send_presentation(callback: CallbackQuery):
-    project_name = callback.data.split("_")[1]
+@router.callback_query(F.data == "choose_both")
+async def choose_both(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(UserState.SHOW_BOTH_OPTIONS)
 
-    if project_name in PROJECTS:
-        project = PROJECTS[project_name]
-        presentation_path = project.get_presentation()
-
-        if presentation_path and presentation_path.stat().st_size > 0:
-            file = FSInputFile(presentation_path)
-            await callback.message.answer_document(file, caption=f"📄 Презентация проекта {project.name}")
-        else:
-            await callback.message.answer(f"❌ Презентация для проекта {project.name} не найдена.")
-    else:
-        await callback.message.answer("❌ Проект не найден.")
+    await callback.message.answer(
+        "<b>Руда и уголь.</b>\nЧто вас интересует?",
+        reply_markup=InlineKeyboards.project_options_keyboard("ugol")
+    )
 
     await callback.answer()

@@ -11,9 +11,9 @@ from src.logs.logger import Logger
 from src.handlers.start import router as start_router
 from src.handlers.callbacks.main_menu import router as main_menu_router
 from src.handlers.callbacks.projects import router as project_router
-from src.handlers.callbacks.news import router as news_router
-from src.handlers.admins.upload_handler import router as admin_router
-from src.handlers.callbacks.upload_presentation import router as upload_router
+from src.handlers.callbacks.product_actions import router as product_actions_router
+from src.handlers.callbacks.admin_tools import router as admin_router
+from src.models.db import Database
 
 logger = Logger()
 
@@ -30,12 +30,14 @@ async def main() -> None:
 
     dp: Dispatcher = Dispatcher()
 
+    db = Database()
+    dp["db"] = db
+
     dp.include_router(start_router)
     dp.include_router(main_menu_router)
     dp.include_router(project_router)
-    dp.include_router(news_router)
+    dp.include_router(product_actions_router)
     dp.include_router(admin_router)
-    dp.include_router(upload_router)
 
     try:
         await bot.delete_webhook(drop_pending_updates=True)  # Удаляем вебхук и очищаем старые обновления

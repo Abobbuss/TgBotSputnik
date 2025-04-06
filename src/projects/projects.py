@@ -1,19 +1,40 @@
 ﻿from src.projects.base_project import BaseProject
 
-class GeosProject(BaseProject):
+class RudaProject(BaseProject):
     def __init__(self):
         super().__init__(
-            name="ГЕОС",
-            tg_link="https://t.me/geos_project",
-            description="ГЕОС - это инновационный проект, направленный на ... .",
-            folder_presentation_name="geos",
+            name="GEOS Руда",
+            tg_link="t.me/geos_geology",
+            description=(
+                "GEOS Руда – это простое и комплексное решение задач по геологоразведке "
+                "и разработке месторождений рудных ископаемых. Удобный инструмент для автоматизации "
+                "рутинных задач моделирования месторождений, подсчета запасов и проектирования добычи:\n\n"
+                "• полный цикл по проектированию месторождений;\n"
+                "• точные 3D-модели на основе методов структурной геологии;\n"
+                "• импортозамещающее ПО;\n"
+                "• сокращение трудозатрат геологов и проектировщиков;\n"
+                "• входит в Реестр российского ПО;\n"
+                "• работает с файлами Micromine и Datamine."
+            ),
+            folder_presentation_name="ruda",
         )
 
-class FarmProject(BaseProject):
+
+class UgolProject(BaseProject):
     def __init__(self):
         super().__init__(
-            name="Ферма",
-            tg_link="https://t.me/farm_project",
-            description="Ферма - это передовой агротехнологический проект, который ...",
-            folder_presentation_name="farm",
+            name="GEOS Уголь",
+            tg_link="t.me/geos_geology",
+            description=(
+                "GEOS Уголь – это система, которая помогает автоматизировать расчёт запасов угля "
+                "и проектирование месторождений:\n\n"
+                "• точные 3D-модели угольного пласта любой сложности;\n"
+                "• импортозамещающее ПО;\n"
+                "• сокращение трудозатрат геологов и проектировщиков;\n"
+                "• входит в Реестр российского ПО;\n"
+                "• поддержка плагина под NanoCAD и AutoCAD.\n\n"
+                "GEOS Уголь создан для угольных месторождений, учитывает методику расчёта"
+                "запасов, принятую в России, а ещё его можно адаптировать под любые ваши задачи."
+            ),
+            folder_presentation_name="ugol",
         )

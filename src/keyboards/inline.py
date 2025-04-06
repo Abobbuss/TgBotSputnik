@@ -5,32 +5,45 @@ config = load_config()
 
 class InlineKeyboards:
     @staticmethod
-    def main_menu(user_id: int):
+    def start_menu(user_id: int):
         buttons = [
-            [InlineKeyboardButton(text="Наши проекты", callback_data="projects")],
-            [InlineKeyboardButton(text="Новости спутника", callback_data="news")],
-            [InlineKeyboardButton(text="Получить презентацию", callback_data="presentation")],
+            [InlineKeyboardButton(text="📄 Получить материалы круглого стола", callback_data="get_materials")],
+            [InlineKeyboardButton(text="🔍 В каком направлении вы работаете?", callback_data="select_direction")],
         ]
 
         if user_id in config.tg_bot.admins:
-            buttons.append(
-                [InlineKeyboardButton(text="Загрузить последнюю презентацию", callback_data="upload_presentation")])
+            buttons.append([
+                InlineKeyboardButton(text="🧾 Сгенерировать QR", callback_data="generate_qr")
+            ])
+            buttons.append([
+                InlineKeyboardButton(text="📁 Показать все QR", callback_data="show_all_qr")
+            ])
+            buttons.append([
+                InlineKeyboardButton(text="👥 Всего пользователей", callback_data="show_user_count")
+            ])
+            buttons.append([
+                InlineKeyboardButton(text="📊 Рефералы", callback_data="show_referrals")
+            ])
+            buttons.append([
+                InlineKeyboardButton(text="🗂 Запросы пользователей", callback_data="show_user_requests")
+            ])
 
         return InlineKeyboardMarkup(inline_keyboard=buttons)
 
     @staticmethod
-    def projects_menu():
-        return InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="ГЕОС", callback_data="geos")],
-            [InlineKeyboardButton(text="Ферма", callback_data="farm")],
-            [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main")]
-        ])
+    def direction_selection():
+        buttons = [
+            [InlineKeyboardButton(text="🟠 Руды", callback_data="choose_ruda")],
+            [InlineKeyboardButton(text="⚫ Уголь", callback_data="choose_ugol")],
+            [InlineKeyboardButton(text="🟢 Работаю в обоих направлениях", callback_data="choose_both")],
+        ]
+        return InlineKeyboardMarkup(inline_keyboard=buttons)
 
     @staticmethod
-    def project_buttons(project_name: str):
+    def project_options_keyboard(project_type: str) -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="📄 Получить презентацию", callback_data=f"presentation_{project_name.lower()}")],
-            [InlineKeyboardButton(text="⬅ Назад", callback_data="projects")]
+            [InlineKeyboardButton(text="ℹ️ Узнать подробнее", callback_data=f"{project_type}_details")],
+            [InlineKeyboardButton(text="📝 Записаться на демо", callback_data=f"{project_type}_demo")],
         ])
 
     @staticmethod
