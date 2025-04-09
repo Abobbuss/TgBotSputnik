@@ -33,4 +33,4 @@ async def show_main_menu(message: Message, state: FSMContext, db: Database):
         )
 
     await state.set_state(UserState.MAIN_MENU)
-    await message.answer("📋 Главное меню. Выберите действие:", reply_markup=InlineKeyboards.start_menu(message.from_user.id))
+    await message.answer("📋 <b>Главное меню</b>, выберите действие:", reply_markup=InlineKeyboards.start_menu(message.from_user.id))

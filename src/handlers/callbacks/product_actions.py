@@ -39,7 +39,7 @@ async def notify_manager_about_demo(bot: Bot, db: Database, message: Message, pr
 @router.callback_query(F.data == "ruda_details")
 async def ruda_details(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_EMAIL_RUDA)
-    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.")
+    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ruda_demo")
@@ -50,18 +50,19 @@ async def ruda_demo(callback: CallbackQuery, state: FSMContext, db: Database):
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Да", callback_data="ruda_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="ruda_phone_no")]
+                [InlineKeyboardButton(text="❌ Нет", callback_data="ruda_phone_no")],
+                [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_RUDA)
-        await callback.message.answer("📱 Укажите ваш номер телефона.")
+        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ruda_phone_yes")
 async def ruda_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_RUDA)
-    await callback.message.answer("📱 Введите новый номер телефона.")
+    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ruda_phone_no")
@@ -69,7 +70,8 @@ async def ruda_phone_no(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_CONTACT_INFO_RUDA)
     await callback.message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
-        "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>"
+        "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>",
+        reply_markup=InlineKeyboards.cancel()
     )
     await callback.answer()
 
@@ -79,7 +81,8 @@ async def handle_ruda_phone(message: Message, state: FSMContext, db: Database):
     await state.set_state(UserState.AWAITING_CONTACT_INFO_RUDA)
     await message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
-        "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>"
+        "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>",
+        reply_markup=InlineKeyboards.cancel()
     )
 
 @router.message(UserState.AWAITING_EMAIL_RUDA)
@@ -121,7 +124,7 @@ async def handle_ruda_share(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "ugol_details")
 async def ugol_details(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_EMAIL_UGOL)
-    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.")
+    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ugol_demo")
@@ -132,18 +135,19 @@ async def ugol_demo(callback: CallbackQuery, state: FSMContext, db: Database):
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Да", callback_data="ugol_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="ugol_phone_no")]
+                [InlineKeyboardButton(text="❌ Нет", callback_data="ugol_phone_no")],
+                [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_UGOL)
-        await callback.message.answer("📱 Укажите ваш номер телефона.")
+        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ugol_phone_yes")
 async def ugol_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_UGOL)
-    await callback.message.answer("📱 Введите новый номер телефона.")
+    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "ugol_phone_no")
@@ -152,7 +156,8 @@ async def ugol_phone_no(callback: CallbackQuery, state: FSMContext):
     await callback.message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
         "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>\n"
-        "Мы свяжемся с вами в течение 24 часов для уточнения деталей."
+        "Мы свяжемся с вами в течение 24 часов для уточнения деталей.",
+        reply_markup=InlineKeyboards.cancel()
     )
     await callback.answer()
 
@@ -163,7 +168,8 @@ async def handle_ugol_phone(message: Message, state: FSMContext, db: Database):
     await message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
         "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>\n"
-        "Мы свяжемся с вами в течение 24 часов для уточнения деталей."
+        "Мы свяжемся с вами в течение 24 часов для уточнения деталей.",
+        reply_markup=InlineKeyboards.cancel()
     )
 
 @router.message(UserState.AWAITING_EMAIL_UGOL)
@@ -206,7 +212,7 @@ async def handle_ugol_share(callback: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "both_details")
 async def both_details(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_EMAIL_BOTH)
-    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.")
+    await callback.message.answer("📧 Напишите свой email: мы пришлем вам запись выступлений Круглого стола.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.message(UserState.AWAITING_EMAIL_BOTH)
@@ -228,25 +234,27 @@ async def both_demo(callback: CallbackQuery, state: FSMContext, db: Database):
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Да", callback_data="both_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="both_phone_no")]
+                [InlineKeyboardButton(text="❌ Нет", callback_data="both_phone_no")],
+                [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_BOTH)
-        await callback.message.answer("📱 Укажите ваш номер телефона.")
+        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "both_phone_yes")
 async def both_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_BOTH)
-    await callback.message.answer("📱 Введите новый номер телефона.")
+    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
     await callback.answer()
 
 @router.callback_query(F.data == "both_phone_no")
 async def both_phone_no(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_CONTACT_INFO_BOTH)
     await callback.message.answer(
-        "📄 Укажите ваше имя, email, компанию и должность.\n\nПожалуйста, напишите контакную информацию <b>одним сообщением</b>"
+        "📄 Укажите ваше имя, email, компанию и должность.\n\nПожалуйста, напишите контакную информацию <b>одним сообщением</b>",
+        reply_markup=InlineKeyboards.cancel()
     )
     await callback.answer()
 
@@ -255,7 +263,8 @@ async def handle_both_phone(message: Message, state: FSMContext, db: Database):
     db.update_user_info(message.from_user.id, phone=message.text.strip())
     await state.set_state(UserState.AWAITING_CONTACT_INFO_BOTH)
     await message.answer(
-        "📄 Укажите ваше имя, email, компанию и должность.\n\nПожалуйста, напишите контакную информацию <b>одним сообщением</b>"
+        "📄 Укажите ваше имя, email, компанию и должность.\n\nПожалуйста, напишите контакную информацию <b>одним сообщением</b>",
+        reply_markup=InlineKeyboards.cancel()
     )
 
 @router.message(UserState.AWAITING_CONTACT_INFO_BOTH)

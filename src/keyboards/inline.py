@@ -36,6 +36,7 @@ class InlineKeyboards:
             [InlineKeyboardButton(text="🟠 Руды", callback_data="choose_ruda")],
             [InlineKeyboardButton(text="⚫ Уголь", callback_data="choose_ugol")],
             [InlineKeyboardButton(text="🟢 Работаю в обоих направлениях", callback_data="choose_both")],
+            [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main_menu")],
         ]
         return InlineKeyboardMarkup(inline_keyboard=buttons)
 
@@ -44,26 +45,12 @@ class InlineKeyboards:
         return InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(text="ℹ️ Узнать подробнее", callback_data=f"{project_type}_details")],
             [InlineKeyboardButton(text="📝 Записаться на демо", callback_data=f"{project_type}_demo")],
+            [InlineKeyboardButton(text="⬅ Назад", callback_data="select_direction")]
         ])
 
     @staticmethod
-    def back_to_main():
-        return InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main")]
-        ])
-
-    @staticmethod
-    def news_navigation(index: int, total: int,  user_id: int):
-        buttons = []
-
-        if index > 0:
-            buttons.append(InlineKeyboardButton(text="⬅ Предыдущая", callback_data=f"news_{index - 1}"))
-        if index < total - 1:
-            buttons.append(InlineKeyboardButton(text="Следующая ➡", callback_data=f"news_{index + 1}"))
-
-        buttons.append(InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main"))
-
-        if user_id in config.tg_bot.admins:
-            buttons.append(InlineKeyboardButton(text="➕ Добавить новость", callback_data="add_news"))
-
-        return InlineKeyboardMarkup(inline_keyboard=[buttons])
+    def cancel():
+        buttons = [
+            [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
+        ]
+        return InlineKeyboardMarkup(inline_keyboard=buttons)
