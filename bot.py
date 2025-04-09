@@ -32,6 +32,7 @@ async def main() -> None:
 
     db = Database()
     dp["db"] = db
+    dp["bot"] = bot
 
     dp.include_router(start_router)
     dp.include_router(main_menu_router)

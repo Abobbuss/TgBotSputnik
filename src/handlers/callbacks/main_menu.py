@@ -1,6 +1,7 @@
 ﻿from aiogram import Router, F
 from aiogram.types import CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
+from pathlib import Path
 
 from src.states.states import UserState
 from src.keyboards.inline import InlineKeyboards
@@ -11,8 +12,30 @@ router = Router()
 @router.callback_query(F.data == "get_materials")
 async def send_round_table_materials(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.MAIN_MENU)
-    # Пока не отправляем реальные материалы — просто заглушка
-    await callback.message.answer("📄 Материалы круглого стола скоро будут доступны для скачивания.")
+
+    materials_dir = Path(__file__).parent.parent.parent / "files" / "roundTable"
+
+    if not materials_dir.exists() or not materials_dir.is_dir():
+        await callback.message.answer("❌ Пока что нет доступных материалов.")
+        await callback.answer()
+        return
+
+    files = list(materials_dir.glob("*.*"))
+
+    if not files:
+        await callback.message.answer("❌ Пока что нет доступных материалов.")
+        await callback.answer()
+        return
+
+    await callback.message.answer("📦 Загружаем материалы круглого стола...")
+
+    for file_path in files:
+        try:
+            file = FSInputFile(file_path)
+            await callback.message.answer_document(file)
+        except Exception as e:
+            await callback.message.answer(f"⚠️ Не удалось отправить файл, попробуйте позже.")
+
     await callback.answer()
 
 

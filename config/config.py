@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 class TelegramBotConfig:
     token: str
     admins: List[int]
+    manager_id: int
 
 @dataclass
 class Config:
@@ -22,5 +23,6 @@ def load_config() -> Config:
 
     return Config(tg_bot=TelegramBotConfig(
         token=getenv("TELEGRAM_TOKEN"),
-        admins=admin_ids
+        admins=admin_ids,
+        manager_id=int(os.getenv("MANAGER_TG_ID", "0"))
     ))
