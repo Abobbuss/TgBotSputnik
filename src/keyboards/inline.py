@@ -33,7 +33,7 @@ class InlineKeyboards:
     @staticmethod
     def direction_selection():
         buttons = [
-            [InlineKeyboardButton(text="🟠 Руды", callback_data="choose_ruda")],
+            [InlineKeyboardButton(text="🟠 Руда", callback_data="choose_ruda")],
             [InlineKeyboardButton(text="⚫ Уголь", callback_data="choose_ugol")],
             [InlineKeyboardButton(text="🟢 Работаю в обоих направлениях", callback_data="choose_both")],
             [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main_menu")],

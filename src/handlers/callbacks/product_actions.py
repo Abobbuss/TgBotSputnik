@@ -109,8 +109,7 @@ async def ruda_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         await callback.message.answer(
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="✅ Да", callback_data="ruda_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="ruda_phone_no")],
+                [InlineKeyboardButton(text="✅ Да", callback_data="ruda_phone_yes"), InlineKeyboardButton(text="❌ Нет", callback_data="ruda_phone_no")],
                 [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
@@ -180,8 +179,7 @@ async def ugol_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         await callback.message.answer(
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="✅ Да", callback_data="ugol_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="ugol_phone_no")],
+                [InlineKeyboardButton(text="✅ Да", callback_data="ugol_phone_yes"), InlineKeyboardButton(text="❌ Нет", callback_data="ugol_phone_no")],
                 [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
@@ -252,8 +250,7 @@ async def both_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         await callback.message.answer(
             "📱 У вас уже указан номер телефона. Хотите заменить его?",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="✅ Да", callback_data="both_phone_yes")],
-                [InlineKeyboardButton(text="❌ Нет", callback_data="both_phone_no")],
+                [InlineKeyboardButton(text="✅ Да", callback_data="both_phone_yes"), InlineKeyboardButton(text="❌ Нет", callback_data="both_phone_no")],
                 [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
             ])
         )
