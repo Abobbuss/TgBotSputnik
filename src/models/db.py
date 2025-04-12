@@ -22,7 +22,6 @@ class Database:
                     telegram_id INTEGER UNIQUE NOT NULL,
                     username TEXT,
                     phone TEXT,
-                    info TEXT,
                     referral_name TEXT,
                     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
@@ -54,6 +53,7 @@ class Database:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     user_id INTEGER NOT NULL,
                     action TEXT NOT NULL,
+                    info TEXT,
                     action_time DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES Users(id)
                 )
@@ -133,11 +133,7 @@ class Database:
             result = cursor.fetchone()
             return bool(result and result[0])
 
-
-    def add_user_action(self, telegram_id: int, action: str):
-        """
-        Добавляет новую запись о действии пользователя.
-        """
+    def add_user_action(self, telegram_id: int, action: str, info: Optional[str] = None):
         with self._connect() as db:
             cursor = db.cursor()
             cursor.execute("SELECT id FROM Users WHERE telegram_id = ?", (telegram_id,))
@@ -146,21 +142,20 @@ class Database:
                 return
             user_id = result[0]
             cursor.execute(
-                "INSERT INTO UserActions (user_id, action) VALUES (?, ?)",
-                (user_id, action)
+                "INSERT INTO UserActions (user_id, action, info) VALUES (?, ?, ?)",
+                (user_id, action, info)
             )
             db.commit()
 
-
     def get_all_user_actions(self):
         """
-        Возвращает список всех действий пользователей.
+        Возвращает список всех действий пользователей с информацией и временем.
         """
         with self._connect() as db:
             cursor = db.cursor()
             cursor.execute('''
-                SELECT Users.telegram_id, Users.username, Users.info, Users.phone,
-                       Actions.action, Actions.action_time
+                SELECT Users.telegram_id, Users.username, Users.phone,
+                       Actions.info, Actions.action, Actions.action_time
                 FROM UserActions AS Actions
                 LEFT JOIN Users ON Users.id = Actions.user_id
                 ORDER BY Actions.action_time DESC
@@ -200,16 +195,29 @@ class Database:
 
 
     def get_users_by_ref(self, ref_name: str):
-        """
-        Возвращает пользователей, пришедших по конкретному рефералу.
-        """
         with self._connect() as db:
             cursor = db.cursor()
             cursor.execute('''
-                SELECT Users.telegram_id, Users.username, Users.info, Users.registration_date
+                SELECT Users.telegram_id, Users.username, Users.registration_date
                 FROM ReferralUsers
                 LEFT JOIN Users ON Users.id = ReferralUsers.user_id
                 WHERE ReferralUsers.ref_name = ?
                 ORDER BY Users.registration_date DESC
             ''', (ref_name,))
             return cursor.fetchall()
+
+
+    def get_last_demo_info(self, telegram_id: int) -> Optional[str]:
+        with self._connect() as db:
+            cursor = db.cursor()
+            cursor.execute("""
+                SELECT Actions.info
+                FROM UserActions AS Actions
+                JOIN Users ON Users.id = Actions.user_id
+                WHERE Users.telegram_id = ?
+                  AND Actions.action LIKE 'Запись на демо%'
+                ORDER BY Actions.action_time DESC
+                LIMIT 1
+            """, (telegram_id,))
+            result = cursor.fetchone()
+            return result[0] if result and result[0] else None

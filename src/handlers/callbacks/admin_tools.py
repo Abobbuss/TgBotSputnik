@@ -147,7 +147,7 @@ async def show_user_requests(callback: CallbackQuery, db: Database):
         await callback.answer()
         return
 
-    # Создаём папку для отчётов
+    # Путь и директория для сохранения
     save_dir = Path("reports")
     save_dir.mkdir(parents=True, exist_ok=True)
 
@@ -158,23 +158,21 @@ async def show_user_requests(callback: CallbackQuery, db: Database):
     workbook = xlsxwriter.Workbook(file_path)
     worksheet = workbook.add_worksheet("User Requests")
 
-    # Заголовки
-    headers = ["Telegram ID", "Username", "Инфо", "Телефон", "Запрос", "Время"]
+    headers = ["Telegram ID", "Username", "Телефон", "Инфо", "Запрос", "Время"]
     for col, header in enumerate(headers):
         worksheet.write(0, col, header)
 
-    # Данные
-    for row_num, (tg_id, username, info, phone, action, time) in enumerate(actions, start=1):
+    for row_num, (tg_id, username, phone, info, action, time) in enumerate(actions, start=1):
         worksheet.write(row_num, 0, tg_id)
         worksheet.write(row_num, 1, username or "—")
-        worksheet.write(row_num, 2, info or "—")
-        worksheet.write(row_num, 3, phone or "—")
+        worksheet.write(row_num, 2, phone or "—")
+        worksheet.write(row_num, 3, info or "—")
         worksheet.write(row_num, 4, action)
         worksheet.write(row_num, 5, time)
 
     workbook.close()
 
-    # Отправляем Excel-файл
+    # Отправка
     file = FSInputFile(path=file_path)
     await callback.message.answer_document(
         document=file,

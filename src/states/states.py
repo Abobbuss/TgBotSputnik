@@ -5,6 +5,10 @@ from aiogram.fsm.state import State, StatesGroup
 class UserState(StatesGroup):
     MAIN_MENU = State()                  # Главное меню
     START_MENU = State()                 # Меню после /start
+
+    GET_DATA_ROUND_TABLE = State()
+    AWAITING_EMAIL_ROUND_TABLE = State()
+
     SELECT_DIRECTION = State()           # В каком направлении вы работаете
     SHOW_RUDA_OPTIONS = State()          # После выбора "Руды"
     SHOW_UGOL_OPTIONS = State()          # После выбора "Уголь"

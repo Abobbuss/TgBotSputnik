@@ -54,3 +54,11 @@ class InlineKeyboards:
             [InlineKeyboardButton(text="⬅ Отмена", callback_data="back_to_main_menu")],
         ]
         return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    @staticmethod
+    def get_video_round_table():
+        buttons = [
+            [InlineKeyboardButton(text="🎥 Получить записи круглого стола", callback_data="get_video_to_round_table")],
+            [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main_menu")],
+        ]
+        return InlineKeyboardMarkup(inline_keyboard=buttons)
