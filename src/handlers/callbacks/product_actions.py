@@ -61,7 +61,7 @@ async def send_project_files(callback: CallbackQuery, folder_name: str):
         await callback.message.answer(f"❌ Нет файлов для проекта.")
         return
 
-    await callback.message.answer(f"📂 Материалы по проекту <b>{readable_name}</b>:")
+    await callback.message.answer(f"📂 Направляем вам подробную информацию о продукте <b>{readable_name}</b> для ознакомления.")
 
     for file_path in files:
         try:
@@ -81,16 +81,14 @@ async def handle_project_details(callback: CallbackQuery, folder_names: list[str
     await callback.message.answer(message_constants.SOCIAL_LINKS, disable_web_page_preview=True)
     await callback.message.answer(message_constants.SOCIAL_TEXT)
 
-    project_titles = {
-        "ruda": "Руда",
-        "ugol": "Уголь",
-        "both": "Руда и Уголь"
+    project_texts = {
+        "ruda": message_constants.GEOS_RUDA_TEXT.strip(),
+        "ugol": message_constants.GEOS_UGOL_TEXT.strip(),
+        "both": f"{message_constants.GEOS_RUDA_TEXT.strip()}\n\n{message_constants.GEOS_UGOL_TEXT.strip()}",
     }
 
-    readable_name = project_titles.get(project_code.lower(), project_code.title())
-
     await callback.message.answer(
-        f"Выберите действие по проекту: <b>{readable_name}</b>",
+        project_texts[project_code],
         reply_markup=InlineKeyboards.project_options_keyboard(project_code)
     )
 
@@ -115,13 +113,13 @@ async def ruda_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_RUDA)
-        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
+        await callback.message.answer("📱 Укажите ваш номер телефона или поделитесь существующим.", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "ruda_phone_yes")
 async def ruda_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_RUDA)
-    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
+    await callback.message.answer("📱 Введите новый номер телефона или поделитесь существующим..", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "ruda_phone_no")
@@ -136,8 +134,25 @@ async def ruda_phone_no(callback: CallbackQuery, state: FSMContext):
 
 @router.message(UserState.AWAITING_PHONE_RUDA)
 async def handle_ruda_phone(message: Message, state: FSMContext, db: Database):
-    db.update_user_info(message.from_user.id, phone=message.text.strip())
+    if message.text and message.text.strip().lower() in ["отмена", "❌ отмена"]:
+        await message.answer("<b>Главное меню,</b> выберите действие.", reply_markup=InlineKeyboards.start_menu(message.from_user.id))
+        await state.clear()
+        return
+
+    phone = None
+
+    if message.contact and message.contact.phone_number:
+        phone = message.contact.phone_number
+    elif message.text:
+        phone = message.text.strip()
+
+    if not phone:
+        await message.answer("❌ Не удалось получить номер телефона. Попробуйте снова.")
+        return
+
+    db.update_user_info(message.from_user.id, phone=phone)
     await state.set_state(UserState.AWAITING_CONTACT_INFO_RUDA)
+
     await message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
         "Пожалуйста, напишите контакную информацию <b>одним сообщением</b>",
@@ -185,13 +200,13 @@ async def ugol_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_UGOL)
-        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
+        await callback.message.answer("📱 Укажите ваш номер телефона или поделитесь существующим.", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "ugol_phone_yes")
 async def ugol_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_UGOL)
-    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
+    await callback.message.answer("📱 Введите новый номер телефона или поделитесь существующим.", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "ugol_phone_no")
@@ -206,7 +221,23 @@ async def ugol_phone_no(callback: CallbackQuery, state: FSMContext):
 
 @router.message(UserState.AWAITING_PHONE_UGOL)
 async def handle_ugol_phone(message: Message, state: FSMContext, db: Database):
-    db.update_user_info(message.from_user.id, phone=message.text.strip())
+    if message.text and message.text.strip().lower() in ["отмена", "❌ отмена"]:
+        await message.answer("<b>Операция отменена.</b>", reply_markup=InlineKeyboards.start_menu(message.from_user.id))
+        await state.clear()
+        return
+
+    phone = None
+
+    if message.contact and message.contact.phone_number:
+        phone = message.contact.phone_number
+    elif message.text:
+        phone = message.text.strip()
+
+    if not phone:
+        await message.answer("❌ Не удалось получить номер телефона. Попробуйте снова.")
+        return
+
+    db.update_user_info(message.from_user.id, phone=phone)
     await state.set_state(UserState.AWAITING_CONTACT_INFO_UGOL)
     await message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\n"
@@ -256,13 +287,13 @@ async def both_demo(callback: CallbackQuery, state: FSMContext, db: Database):
         )
     else:
         await state.set_state(UserState.AWAITING_PHONE_BOTH)
-        await callback.message.answer("📱 Укажите ваш номер телефона.", reply_markup=InlineKeyboards.cancel())
+        await callback.message.answer("📱 Укажите ваш номер телефона или поделитесь существующим.", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "both_phone_yes")
 async def both_phone_yes(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_PHONE_BOTH)
-    await callback.message.answer("📱 Введите новый номер телефона.", reply_markup=InlineKeyboards.cancel())
+    await callback.message.answer("📱 Введите новый номер телефона или поделитесь существующим.", reply_markup=InlineKeyboards.phone_request_keyboard())
     await callback.answer()
 
 @router.callback_query(F.data == "both_phone_no")
@@ -276,7 +307,23 @@ async def both_phone_no(callback: CallbackQuery, state: FSMContext):
 
 @router.message(UserState.AWAITING_PHONE_BOTH)
 async def handle_both_phone(message: Message, state: FSMContext, db: Database):
-    db.update_user_info(message.from_user.id, phone=message.text.strip())
+    if message.text and message.text.strip().lower() in ["отмена", "❌ отмена"]:
+        await message.answer("<b>Операция отменена.</b>", reply_markup=InlineKeyboards.start_menu(message.from_user.id))
+        await state.clear()
+        return
+
+    phone = None
+
+    if message.contact and message.contact.phone_number:
+        phone = message.contact.phone_number
+    elif message.text:
+        phone = message.text.strip()
+
+    if not phone:
+        await message.answer("❌ Не удалось получить номер телефона. Попробуйте снова.")
+        return
+
+    db.update_user_info(message.from_user.id, phone=phone)
     await state.set_state(UserState.AWAITING_CONTACT_INFO_BOTH)
     await message.answer(
         "📄 Укажите ваше имя, email, компанию и должность.\n\nПожалуйста, напишите контакную информацию <b>одним сообщением</b>",

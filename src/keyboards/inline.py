@@ -1,4 +1,4 @@
-﻿from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+﻿from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
 from config import load_config
 
 config = load_config()
@@ -62,3 +62,14 @@ class InlineKeyboards:
             [InlineKeyboardButton(text="⬅ Назад", callback_data="back_to_main_menu")],
         ]
         return InlineKeyboardMarkup(inline_keyboard=buttons)
+
+    @staticmethod
+    def phone_request_keyboard() -> ReplyKeyboardMarkup:
+        return ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="📲 Поделиться номером", request_contact=True)],
+                [KeyboardButton(text="❌ Отмена")]
+            ],
+            resize_keyboard=True,
+            one_time_keyboard=True
+        )

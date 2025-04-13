@@ -45,7 +45,7 @@ async def send_round_table_materials(callback: CallbackQuery, state: FSMContext)
 @router.callback_query(F.data == "get_video_to_round_table")
 async def send_round_table_video(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.AWAITING_EMAIL_ROUND_TABLE)
-    await callback.message.answer("✉️ Введите свой email для получения записи круглого стола:")
+    await callback.message.answer("✉️ Введите свой email для получения записи круглого стола:", reply_markup= InlineKeyboards.cancel())
     await callback.answer()
 
 
@@ -55,7 +55,7 @@ async def handle_round_table_email(message: Message, state: FSMContext, db: Data
 
     db.add_user_action(message.from_user.id, "Запрос видео круглого стола", info=email)
 
-    await message.answer("✅ Спасибо! Мы отправим запись на вашу почту.")
+    await message.answer("✅ Спасибо! Мы отправим на указанный email запись круглого столка, как только она появится.")
     await message.answer(message_constants.SOCIAL_LINKS, disable_web_page_preview=True)
     await message.answer(message_constants.SOCIAL_TEXT)
     await message.answer("<b>Главное меню</b>, выберите действие:", reply_markup=InlineKeyboards.start_menu(message.from_user.id))

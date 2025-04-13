@@ -31,8 +31,13 @@ async def choose_ugol(callback: CallbackQuery, state: FSMContext):
 async def choose_both(callback: CallbackQuery, state: FSMContext):
     await state.set_state(UserState.SHOW_BOTH_OPTIONS)
 
+    combined_text = (
+        f"{message_constants.GEOS_RUDA_TEXT}\n\n"
+        f"{message_constants.GEOS_UGOL_TEXT}"
+    )
+
     await callback.message.answer(
-        "<b>Руда и уголь.</b>\nЧто вас интересует?",
+        combined_text,
         reply_markup=InlineKeyboards.project_options_keyboard("both")
     )
 
