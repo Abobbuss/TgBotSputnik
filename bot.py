@@ -5,6 +5,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiohttp import ClientTimeout
 
 from config import Config, load_config
 from src.logs.logger import Logger
@@ -26,7 +27,7 @@ async def main() -> None:
     logger.info("Starting bot")
     config: Config = load_config()
 
-    bot: Bot = Bot(token=config.tg_bot.token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot: Bot = Bot(token=config.tg_bot.token, timeout=ClientTimeout(total=15), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     dp: Dispatcher = Dispatcher()
 
@@ -46,6 +47,11 @@ async def main() -> None:
         logger.info("Starting polling...")
     except Exception as e:
         logging.error("Failed to fetch updates - %s: %s", type(e).__name__, e)
+    finally:
+        try:
+            await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
+        except asyncio.CancelledError:
+            logger.info("Tasks were cancelled.")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
