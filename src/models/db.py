@@ -9,7 +9,7 @@ class Database:
         self._ensure_db_initialized()
 
     def _connect(self):
-        return sqlite3.connect(self.db_path)
+        return sqlite3.connect(self.db_path, timeout=10)
 
     def _ensure_db_initialized(self):
         with self._connect() as db:
