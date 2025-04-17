@@ -47,11 +47,6 @@ async def main() -> None:
         logger.info("Starting polling...")
     except Exception as e:
         logging.error("Failed to fetch updates - %s: %s", type(e).__name__, e)
-    finally:
-        try:
-            await dp.start_polling(bot, skip_updates=True, drop_pending_updates=True)
-        except asyncio.CancelledError:
-            logger.info("Tasks were cancelled.")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)

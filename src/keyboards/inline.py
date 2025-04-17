@@ -8,7 +8,7 @@ class InlineKeyboards:
     def start_menu(user_id: int):
         buttons = [
             [InlineKeyboardButton(text="📄 Получить материалы круглого стола", callback_data="get_materials")],
-            [InlineKeyboardButton(text="🔍 В каком направлении вы работаете?", callback_data="select_direction")],
+            [InlineKeyboardButton(text="🔍 Узнать подробнее о продукте", callback_data="select_direction")],
         ]
 
         if user_id in config.tg_bot.admins:
